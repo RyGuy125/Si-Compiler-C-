@@ -127,7 +127,7 @@ void ossDisplay(std::pair<char,Set> x) {
     std::copy(x.second.begin(), std::prev(x.second.end()), 
                 std::ostream_iterator<char>(ss, ", "));
     ss << *(std::prev(x.second.end()));
-    std::cout << x.first << " = {" << ss.str() << "}\n";
+    std::cout << x.first << " = { " << ss.str() << " }\n";
 }
 
 void CFG::DisplayFollow() {

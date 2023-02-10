@@ -27,11 +27,9 @@
 
 #include <set>
 #include <string>
-#include <list>
 #include <map>
 #include <fstream>
 #include <iostream>
-#include <memory>
 
 using Rules = std::multimap<char,std::string>;
 using Rule = std::pair<char,std::string>;
