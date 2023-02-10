@@ -1,0 +1,4 @@
+ent principal( ent argc, cadena argv[] ) {
+    di("Hola, Mundo\n");
+    regresar 0;
+}

@@ -1,0 +1,13 @@
+/* A test of Si Comments */
+! A Test of high priotity comment
+? A test of TODO or fix comment
+ent principal(ent argc, cadena argv[]) {
+    /* ****************************
+     Inside function, create a comment
+        that spans multiple lines
+        a contains many *
+       *************************** */
+    ent val = 45;
+    di("today's value is: " + val);
+    regresar 0; 
+}
