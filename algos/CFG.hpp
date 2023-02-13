@@ -26,6 +26,8 @@
 */
 
 #include <set>
+#include <unordered_set>
+#include <unordered_map>
 #include <string>
 #include <map>
 #include <fstream>
@@ -44,11 +46,12 @@ class CFG {
     void First();
     void Follow();
 
-    Set First_Helper(std::string rule, std::set<char> acc);
+    Set First_Helper(std::string rule, Set acc);
     void Follow_Helper(char var);
     bool LeadsToEpsilon(char a);
 public:
-    CFG(std::ifstream &fs);
+    // Throws unopened ifstream
+    CFG(std::ifstream &fs) noexcept(false);
 
     Set Sigma{};
     Set Variables;

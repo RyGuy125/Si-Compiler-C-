@@ -9,32 +9,42 @@ CFG::CFG(std::ifstream &fs) {
     bool initStart = true;
     while (std::getline(fs>>std::ws,line)) {
         char variable{line[0]};
+
+        // Catch Start Symbol
         if (initStart) {
             Start = variable;
             initStart = false;
         }
+        // Captures productions separated by spaces
         std::string production{};
+        // Iterate across file, non-terminals are always capital letters
         for(std::string::iterator it = line.begin()+1; it != line.end(); ++it)
         {
             if (*it >= 'A' && *it <= 'Z') nonTerminals.insert((*it));
+            // Advances past "->" indicating start of productions
             else if (*it == '-' && (it+1 != line.end() && *(it+1) == '>')) {
                 it++;
                 continue;
             }
+            // Indicates multiple productions from one non-terminal
             else if (*it == '|') {
                 rules.emplace(variable,production);
                 production.clear();
                 continue;
             }
+            // Everything else between ASCII 33 and 126 are considered terminals
             else if (*it >= '!' && *it <= '~') 
                 terminals.insert(*it);
             else continue;
             production += *it;
         }
+        // Assumed every line has a production
         rules.emplace(variable,production);
     }
+    // Create set of variables
     Sigma.insert(terminals.begin(), terminals.end());
     Sigma.insert(nonTerminals.begin(), nonTerminals.end());
+    // Calculate First and Follow Sets
     First();
     Follow();
 }
@@ -60,7 +70,7 @@ bool CFG::LeadsToEpsilon(char a) {
     FirstHelper(AB,acc) = acc.merge(FirstHelper(Productions(B),acc)), 
                             if LeadsToEpsilon(A)
 */
-Set CFG::First_Helper(std::string rule, std::set<char> acc) {
+Set CFG::First_Helper(std::string rule, Set acc) {
     if (rule == "") return acc;
     char c = rule[0];
     if (*(terminals.find(c)) == *(rule.begin())) {
@@ -81,7 +91,6 @@ void CFG::First() {
     for (Rule r : rules) {
         Set fSet = First_Helper(r.second, Set{});
         firstSet[r.first].insert(fSet.begin(),fSet.end());
-        
     }
 }
 
