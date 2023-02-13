@@ -1,11 +1,18 @@
 #include "CFG.hpp"
 
-int main(int argc, char **argv) {
-    std::ifstream input{"test.txt"};
-    CFG cfg(input);
-    // cfg.Print();
-    cfg.DisplayFirst();
-    cfg.DisplayFollow();
+CFG PrintCFG(std::string filename) {
+    std::ifstream input{filename};
+    CFG c(input);
+    c.DisplayFirst();
+    c.DisplayFollow();
 
+    return c;
+}
+
+
+int main(int argc, char **argv) {
+    CFG c = PrintCFG("test.txt");
+    c.DisplayFirst();
+    c.DisplayFollow();
     return 0;
 }
