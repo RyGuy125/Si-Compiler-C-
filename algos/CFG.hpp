@@ -50,6 +50,7 @@ public:
     // Throws unopened ifstream
     CFG(std::ifstream &fs) noexcept(false);
 
+    // The 4-tuple, G = ([Variables] [Sigma] [rules] [Start])
     Set Sigma;
     Set Variables;
     Rules rules;
