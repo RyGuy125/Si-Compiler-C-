@@ -1,7 +1,4 @@
 #include "CFG.hpp"
-#include <sstream>
-#include <algorithm>
-#include <iterator>
 
 CFG::CFG(std::ifstream &fs) {
     if (!fs.is_open()) throw "Please open file before creating CFG";
@@ -76,6 +73,8 @@ Set CFG::First_Helper(std::string rule, Set &acc) {
         acc.insert(c);
         return acc;
     }
+    // Grab all productions of non-terminal stored in char c
+    //      Since grammars are non-recursive, this will always terminate
     std::pair range = rules.equal_range(c);
     for (auto it = range.first; it != range.second; it++)
         acc = First_Helper(it->second,acc);
@@ -86,6 +85,7 @@ Set CFG::First_Helper(std::string rule, Set &acc) {
     return acc;
 }
 
+// Iterate through Rules of type multimap<char,string>, AKA multimap<Rule>
 void CFG::First() {
     for (Rule r : rules) {
         Set fSet{};
@@ -94,7 +94,12 @@ void CFG::First() {
     }
 }
 
-
+/*  Follow_Helper(A -> xBC) = followSet[B] += {First_Helper(C)}
+    Follow_Helper(A -> xB)  = followSet[B] += {Follow_Helper(A)}
+    Follow_Helper(A -> xBC) 
+        = followSet[B] += {Follow_Helper(A)} U {First_Helper(C)},
+        if LeadsToEpsilon(C) == true
+*/
 void CFG::Follow_Helper(char var) {
     for (auto it = rules.begin(); it != rules.end(); it++) {
         for (auto sit = it->second.begin(); sit != it->second.end(); sit++) {
@@ -116,6 +121,7 @@ void CFG::Follow_Helper(char var) {
     }
 }
 
+// Iterate through non terminals to inspect within the rules
 void CFG::Follow() {
     followSet[Start].insert('$');
     for (char A : Variables) {
@@ -132,6 +138,7 @@ void CFG::Print() {
     for (auto x : rules) std::cout << x.first << "->" << x.second << '\n';
 }
 
+// We don't like printing unordered set >:(
 void DisplayParseSet(char c, Set const &x) {
     std::cout << c << " = { ";
     std::string output;
