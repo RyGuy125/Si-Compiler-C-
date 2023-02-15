@@ -13,6 +13,7 @@ CFG::CFG(std::ifstream &fs) {
         // Catch Start Symbol
         if (initStart) {
             Start = variable;
+            Variables.insert(variable);
             initStart = false;
         }
         // Captures productions separated by spaces
@@ -20,7 +21,7 @@ CFG::CFG(std::ifstream &fs) {
         // Iterate across file, non-terminals are always capital letters
         for(std::string::iterator it = line.begin()+1; it != line.end(); ++it)
         {
-            if (*it >= 'A' && *it <= 'Z') nonTerminals.insert((*it));
+            if (*it >= 'A' && *it <= 'Z') Variables.insert((*it));
             // Advances past "->" indicating start of productions
             else if (*it == '-' && (it+1 != line.end() && *(it+1) == '>')) {
                 it++;
@@ -34,16 +35,13 @@ CFG::CFG(std::ifstream &fs) {
             }
             // Everything else between ASCII 33 and 126 are considered terminals
             else if (*it >= '!' && *it <= '~') 
-                terminals.insert(*it);
+                Sigma.insert(*it);
             else continue;
             production += *it;
         }
         // Assumed every line has a production
         rules.emplace(variable,production);
     }
-    // Create set of variables
-    Sigma.insert(terminals.begin(), terminals.end());
-    Sigma.insert(nonTerminals.begin(), nonTerminals.end());
     // Calculate First and Follow Sets
     First();
     Follow();
@@ -54,7 +52,7 @@ CFG::CFG(std::ifstream &fs) {
     LeadsToEpislon(NonTerminal) = any(LeadsToEpsilon(Productions))
 */
 bool CFG::LeadsToEpsilon(char a) {
-    if (auto b = terminals.find(a); b != terminals.end()) {
+    if (auto b = Sigma.find(a); b != Sigma.end()) {
         return *b == '#';
     }
     std::pair range = rules.equal_range(a);
@@ -70,26 +68,28 @@ bool CFG::LeadsToEpsilon(char a) {
     FirstHelper(AB,acc) = acc.merge(FirstHelper(Productions(B),acc)), 
                             if LeadsToEpsilon(A)
 */
-Set CFG::First_Helper(std::string rule, Set acc) {
+Set CFG::First_Helper(std::string rule, Set &acc) {
     if (rule == "") return acc;
     char c = rule[0];
-    if (*(terminals.find(c)) == *(rule.begin())) {
+    // If rule[0] is in Sigma, add it to acc and return
+    if (Sigma.find(c) != Sigma.end()) {
         acc.insert(c);
         return acc;
     }
     std::pair range = rules.equal_range(c);
     for (auto it = range.first; it != range.second; it++)
-        acc.merge(First_Helper(it->second,acc));
+        acc = First_Helper(it->second,acc);
     if (LeadsToEpsilon(c)) {
-        if (nonTerminals.find(*(rule.begin()+1)) != nonTerminals.end())
-            acc.merge(First_Helper(rule.substr(1),acc));
+        if (Variables.find(*(rule.begin()+1)) != Variables.end())
+            acc = First_Helper(rule.substr(1),acc);
     }
     return acc;
 }
 
 void CFG::First() {
     for (Rule r : rules) {
-        Set fSet = First_Helper(r.second, Set{});
+        Set fSet{};
+        fSet = First_Helper(r.second, fSet);
         firstSet[r.first].insert(fSet.begin(),fSet.end());
     }
 }
@@ -100,7 +100,8 @@ void CFG::Follow_Helper(char var) {
         for (auto sit = it->second.begin(); sit != it->second.end(); sit++) {
             if (*sit == var) {
                 if (sit+1 != it->second.end()) {
-                    Set first = First_Helper(std::string{*(sit+1)},Set{});
+                    Set first{};
+                    first = First_Helper(std::string{*(sit+1)},first);
                     first.erase('#');
                     followSet[*sit].insert(first.begin(), first.end());
                 }
@@ -117,34 +118,37 @@ void CFG::Follow_Helper(char var) {
 
 void CFG::Follow() {
     followSet[Start].insert('$');
-    for (char A : nonTerminals) {
+    for (char A : Variables) {
         Follow_Helper(A);
     }
 }
 
 void CFG::Print() {
     std::cout << "Reading Terminals\n";
-    for (auto x : terminals) std::cout << x << ' ';
+    for (auto x : Sigma) std::cout << x << ' ';
     std::cout << "\nReading NonTerminals\n";
-    for (auto x : nonTerminals) std::cout << x << ' ';
+    for (auto x : Variables) std::cout << x << ' ';
     std::cout << "\nReading Rules\n";
     for (auto x : rules) std::cout << x.first << "->" << x.second << '\n';
 }
 
-void ossDisplay(std::pair<char,Set> x) {
-    std::ostringstream ss;
-    std::copy(x.second.begin(), std::prev(x.second.end()), 
-                std::ostream_iterator<char>(ss, ", "));
-    ss << *(std::prev(x.second.end()));
-    std::cout << x.first << " = { " << ss.str() << " }\n";
+void DisplayParseSet(char c, Set const &x) {
+    std::cout << c << " = { ";
+    std::string output;
+    for (auto it = x.begin(); it != x.end(); ++it) {
+        output += *it;
+        output += ", ";
+    }
+    output.erase(output.end()-2);
+    std::cout << output << "}\n";
 }
 
 void CFG::DisplayFollow() {
     std::cout << "********** Follow Set **********\n";
-    for (auto x : followSet) ossDisplay(x);
+    for (auto x : followSet) DisplayParseSet(x.first, x.second);
 }
 
 void CFG::DisplayFirst() {
     std::cout << "********** First Set **********\n";
-    for (auto x : firstSet) ossDisplay(x);
+    for (auto x : firstSet) DisplayParseSet(x.first, x.second);
 }

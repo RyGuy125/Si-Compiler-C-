@@ -35,25 +35,23 @@
 
 using Rules = std::multimap<char,std::string>;
 using Rule = std::pair<char,std::string>;
-using Set = std::set<char>;
-using ParseSet = std::map<char,Set>;
+using Set = std::unordered_set<char>;
+using ParseSet = std::unordered_map<char,Set>;
 class CFG {
-    Set terminals;
-    Set nonTerminals;
     ParseSet firstSet{};
     ParseSet followSet{};
 
     void First();
     void Follow();
 
-    Set First_Helper(std::string rule, Set acc);
+    Set First_Helper(std::string rule, Set &acc);
     void Follow_Helper(char var);
     bool LeadsToEpsilon(char a);
 public:
     // Throws unopened ifstream
     CFG(std::ifstream &fs) noexcept(false);
 
-    Set Sigma{};
+    Set Sigma;
     Set Variables;
     Rules rules;
     char Start;
