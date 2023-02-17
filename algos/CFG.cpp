@@ -122,6 +122,7 @@ void CFG::Follow_Helper(char var) {
 }
 
 // Iterate through non terminals to inspect within the rules
+// O(|V|*|R|), V are Variables, R are Rules
 void CFG::Follow() {
     followSet[Start].insert('$');
     for (char A : Variables) {
