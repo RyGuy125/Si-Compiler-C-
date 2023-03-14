@@ -1,0 +1,9 @@
+# Ignore executables
+*.out
+
+# Ignore text files
+*.txt
+
+# Ignore test cpp files
+*test.cpp
+main.cpp

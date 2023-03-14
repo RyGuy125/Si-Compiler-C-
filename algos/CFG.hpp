@@ -37,8 +37,6 @@ using Rule = std::pair<char,std::string>;
 using Set = std::unordered_set<char>;
 using ParseSet = std::unordered_map<char,Set>;
 class CFG {
-    ParseSet firstSet{};
-    ParseSet followSet{};
 
     void First();
     void Follow();
@@ -49,6 +47,9 @@ class CFG {
 public:
     // Throws unopened ifstream
     CFG(std::ifstream &fs) noexcept(false);
+
+    ParseSet firstSet{};
+    ParseSet followSet{};
 
     // The 4-tuple, G = ([Variables] [Sigma] [rules] [Start])
     Set Sigma;

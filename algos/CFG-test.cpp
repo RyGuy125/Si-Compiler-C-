@@ -5,10 +5,8 @@ CFG PrintCFG(std::string filename) {
     CFG c(input);
     c.DisplayFirst();
     c.DisplayFollow();
-
     return c;
 }
-
 
 int main(int argc, char **argv) {
     CFG c = PrintCFG("test.txt");
