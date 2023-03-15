@@ -22,6 +22,6 @@ main: main.cpp
 # 		$(CC) $(CFLAGS) $< -o $@ -I.
 
 clean:
-		$(RM) *.o
+	$(RM) *.o
 
 .PHONY : all clean
