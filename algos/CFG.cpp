@@ -52,7 +52,7 @@ bool CFG::LeadsToEpsilon(char a) {
     if (auto b = Sigma.find(a); b != Sigma.end()) {
         return *b == '#';
     }
-    std::pair range = rules.equal_range(a);
+    auto range = rules.equal_range(a);
     for (auto it = range.first; it != range.second; it++) {
         if (LeadsToEpsilon(it->second[0])) return true;
     }
@@ -75,7 +75,7 @@ Set CFG::First_Helper(std::string rule, Set &acc) {
     }
     // Grab all productions of non-terminal stored in char c
     //      Since grammars are non-recursive, this will always terminate
-    std::pair range = rules.equal_range(c);
+    auto range = rules.equal_range(c);
     for (auto it = range.first; it != range.second; it++)
         acc = First_Helper(it->second,acc);
     if (LeadsToEpsilon(c)) {

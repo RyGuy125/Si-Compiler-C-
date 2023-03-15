@@ -1,7 +1,7 @@
 #include "LL1.hpp"
 
 // Only parameterized constructor provided. Initializes ParseTable with CFG
-LL1::LL1(CFG &cfg) : cfg{cfg}, stack{'$',cfg.Start} {
+LL1::LL1(CFG &cfg) : stack{'$',cfg.Start}, cfg{cfg} {
     for (char terminal : cfg.Variables) {
         for (char nonterminal : cfg.Sigma) {
             if (nonterminal == '#') continue;

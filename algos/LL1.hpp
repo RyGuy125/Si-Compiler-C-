@@ -11,7 +11,9 @@ using ParseTable = std::unordered_map<char,
 class LL1 {
     ParseTable parseTable{{{}}};
     std::deque<char> stack;
+    // Throws when provided CFG is not an LL(1) Grammar
     void constructTable() noexcept(false);
+    // Helper Function to grab First set of first item in a rule
     Set extractFirst(char c);
     CFG cfg;
 public:
