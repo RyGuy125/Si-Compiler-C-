@@ -1,0 +1,26 @@
+/* Testing correct lex for if statements
+   using mas (else) as well */
+ent principal(ent agrc, cadena argv[]) {
+
+
+    ? How will these statements be executed?
+    si (verdaderx y falsx) {
+        di("true\n");
+    }
+    si mas (falsx o verdaderx) {
+        flota val = .2132332434534;
+        di(val + "\n");
+    }
+    si mas (1 <> 0) {
+        regresar -1;
+    }
+    mas {
+        dejar {
+            constante i = 0;
+        }
+        en {
+            di(i + "\n");
+        }
+    }
+    regresar 0;
+}

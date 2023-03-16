@@ -1,0 +1,6 @@
+/* Testing correct lex for por and para */
+? How will they be used differently?
+ent principal(ent argc, cadena argv[]) {
+
+    regresar 0;
+}
