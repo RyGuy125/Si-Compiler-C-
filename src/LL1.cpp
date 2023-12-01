@@ -1,4 +1,4 @@
-#include "LL1.hpp"
+#include "../include/LL1.hpp"
 
 // Only parameterized constructor provided. Initializes ParseTable with CFG
 LL1::LL1(CFG &cfg) : stack{'$',cfg.Start}, cfg{cfg} {
@@ -35,7 +35,7 @@ void LL1::constructTable() {
     for (std::pair<char,std::string> rule : cfg.rules) {
         Set range = extractFirst(rule.second[0]);
         for (char e : range) {
-            if (e != '#' and parseTable[rule.first][e].second != "Error")
+            if (e != '#' && parseTable[rule.first][e].second != "Error")
                 throw "Grammar is not LL(1)";
             else if (e == '#') {
                 for (auto follow : cfg.followSet[rule.first])

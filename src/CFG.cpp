@@ -1,4 +1,4 @@
-#include "CFG.hpp"
+#include "../include/CFG.hpp"
 
 CFG::CFG(std::ifstream &fs) {
     if (!fs.is_open()) throw "Please open file before creating CFG";
