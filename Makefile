@@ -3,23 +3,25 @@ RM=rm
 CFLAGS= -c -std=c++17 -Wall -pedantic -g
 LFLAGS= -std=c++17 -Wall -pedantic -g
 
-# SRC := $(wildcard *.cpp)
-# OBJS := $(SRC:.cpp=.o)
-OBJS = CFG.o LL1.o
+BIN=./bin/
+SOURCE=./src/
+PROG=CFG LL1
+
+OBJS = $(addprefix $(BIN), $(PROG))
 
 all: $(OBJS)
 
-CFG.o: CFG.cpp
-	$(CC) $(CFLAGS) $^
+# LL1.o: src/LL1.cpp
+#	$(CC) $(CFLAGS) $^
 
-LL1.o: LL1.cpp
-	$(CC) $(CFLAGS) $^
+# CFG.o: src/CFG.cpp
+#	$(CC) $(CFLAGS) $^
 
 main: main.cpp
-	$(CC) $(LFLAGS) $^ $(OBJS) -o $@
+	$(CC) $(LFLAGS) $^ $(OBJS) -o $@ 
 
-# %.o: %.cpp
-# 		$(CC) $(CFLAGS) $< -o $@ -I.
+$(BIN)%: $(SOURCE)%.cpp
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
 	$(RM) *.o main
